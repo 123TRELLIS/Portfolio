@@ -259,10 +259,22 @@ const languages = [
 ]
 
 const projects = [
-  { title: "Urubuga rw'Hoteli", description: "Urubuga rwuzuye rw'restora hamwe na menu, booking, na responsive design." },
-  { title: 'TEMBERA URWANDA', description: "Porogaramu y'ubukerarugendo yubatswe na Vue.js: urupapuro rw'imbonerahamwe, serivisi, ibyerekeye, contact, gallery, n'ahantu." },
-  { title: 'AI Idea generator', description: 'Porogaramu ishingiye kuri AI izana ibitekerezo bikavamo imishinga.' },
-  { title: 'Poritofolio', description: "Iri ni poritofolio yanjye igaragaza ubumenyi n'imishinga." }
+  {
+    title: 'Restaurant Website',
+    description: 'A complete restaurant website featuring an interactive menu, table reservations, and a fully responsive design.'
+  },
+  {
+    title: 'TEMBERA RWANDA',
+    description: 'A tourism platform built with Vue.js, featuring destination pages, services, an about section, contact information, a photo gallery, and location guides.'
+  },
+  {
+    title: 'AI Idea Generator',
+    description: 'An AI-powered application that generates creative ideas and helps users turn them into real projects.'
+  },
+  {
+    title: 'Portfolio Website',
+    description: 'A personal portfolio website showcasing my skills, experience, and completed projects.'
+  }
 ]
 
 const socialLinks = [
