@@ -1,3 +1,7 @@
+<script setup>
+
+</script>
+
 <template>
   <div id="app">
     <nav>
@@ -225,7 +229,14 @@ const translations = {
 
 const texts = computed(() => translations[lang.value])
 
-const hero = {
+const contact = {
+  email: 'tonnyshami2k25@gmail.com',
+  instagram: '@shamy.tonn.25',
+  location: 'Kigali, Rwanda'
+}
+import { reactive } from 'vue'
+
+const hero = reactive({
   name: 'Shami Tonny',
   tagline: "Umunyeshuri | Umuvumbuzi w'ibitekerezo | Umuhanga mu ikoranabuhanga",
   status: 'Nshobora Gukora',
@@ -236,7 +247,7 @@ const hero = {
     'Nshobora gukora kure kandi nkibanda ku mishinga',
     'Niga vuba kandi mfite icyerekezo cyiza mu design'
   ]
-}
+})
 
 const languages = [
   { name: 'HTML', icon: 'https://img.icons8.com/color/96/000000/html-5.png', years: '2 years', projects: '12+ projects' },
@@ -267,6 +278,12 @@ const footer = {
 </script>
 
 <style>
+body.light .theme-toggle,
+body.light .lang-toggle {
+  color: #111;
+  border-color: rgba(0,0,0,0.2);
+}
+
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
@@ -345,8 +362,6 @@ section:nth-of-type(3) { animation-delay: 0.3s; }
 section:nth-of-type(4) { animation-delay: 0.35s; }
 section:nth-of-type(5) { animation-delay: 0.4s; }
 section:nth-of-type(6) { animation-delay: 0.45s; }
-section:nth-of-type(7) { animation-delay: 0.5s; }
-section:nth-of-type(8) { animation-delay: 0.55s; }
 section:nth-of-type(7) { animation-delay: 0.5s; }
 section:nth-of-type(8) { animation-delay: 0.55s; }
 
@@ -614,7 +629,14 @@ footer {
 
 @media (max-width: 560px) {
   nav {
-    padding: 12px;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .nav-left,
+  .nav-right {
+    width: 100%;
+    text-align: center;
   }
 
   nav a {
