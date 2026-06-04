@@ -1,7 +1,13 @@
 <template>
   <div id="app">
     <nav>
-      <a v-for="link in navLinks" :key="link.href" :href="link.href">{{ link.label }}</a>
+      <div class="nav-left">
+        <a v-for="link in navLinks" :key="link.href" :href="link.href">{{ texts.nav[link.key] }}</a>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" @click="toggleTheme">{{ themeLabel }}</button>
+        <button class="lang-toggle" @click="toggleLang">{{ langLabel }}</button>
+      </div>
     </nav>
 
     <header>
@@ -27,40 +33,40 @@
     </header>
 
     <section id="about">
-      <h2>About Me</h2>
-      <p>{{ about }}</p>
+      <h2>{{ texts.headings.about }}</h2>
+      <p>{{ texts.about }}</p>
     </section>
 
     <section id="info">
-      <h2>Personal Info</h2>
+      <h2>{{ texts.headings.info }}</h2>
       <ul>
-        <li v-for="info in personalInfo" :key="info">{{ info }}</li>
+        <li v-for="info in texts.personalInfo" :key="info">{{ info }}</li>
       </ul>
     </section>
 
     <section id="likes">
-      <h2>Likes & Hobbies</h2>
+      <h2>{{ texts.headings.likes }}</h2>
       <ul>
-        <li v-for="like in likes" :key="like">{{ like }}</li>
+        <li v-for="like in texts.likes" :key="like">{{ like }}</li>
       </ul>
     </section>
 
     <section id="models">
-      <h2>Role Models</h2>
+      <h2>{{ texts.headings.models }}</h2>
       <ul>
-        <li v-for="model in roleModels" :key="model">{{ model }}</li>
+        <li v-for="model in texts.roleModels" :key="model">{{ model }}</li>
       </ul>
     </section>
 
     <section id="skills">
-      <h2>Skills & Expertise</h2>
+      <h2>{{ texts.headings.skills }}</h2>
       <ul>
-        <li v-for="skill in skills" :key="skill">{{ skill }}</li>
+        <li v-for="skill in texts.skills" :key="skill">{{ skill }}</li>
       </ul>
     </section>
 
     <section id="languages">
-      <h2>Programming Languages</h2>
+      <h2>{{ texts.headings.languages }}</h2>
       <table class="languages-table">
         <thead>
           <tr>
@@ -82,20 +88,20 @@
     </section>
 
     <section id="services">
-      <h2>Services</h2>
+      <h2>{{ texts.headings.services }}</h2>
       <ul>
-        <li v-for="service in services" :key="service">{{ service }}</li>
+        <li v-for="service in texts.services" :key="service">{{ service }}</li>
       </ul>
     </section>
 
     <section id="contact">
-      <h2>Contact</h2>
-      <p>Email: {{ contact.email }}</p>
-      <p>Instagram: {{ contact.instagram }}</p>
+      <h2>{{ texts.headings.contact }}</h2>
+      <p>{{ texts.labels.email }}: {{ contact.email }}</p>
+      <p>{{ texts.labels.instagram }}: {{ contact.instagram }}</p>
     </section>
 
     <section id="projects">
-      <h2>Projects</h2>
+      <h2>{{ texts.headings.projects }}</h2>
       <div class="projects-container">
         <div class="project-card" v-for="project in projects" :key="project.title">
           <h3>{{ project.title }}</h3>
@@ -107,12 +113,12 @@
     <footer>
       <div class="footer-container">
         <div class="footer-left">
-          <h3>Contact</h3>
-          <p>Email: {{ contact.email }}</p>
-          <p>Location: {{ contact.location }}</p>
+          <h3>{{ texts.footer.contact }}</h3>
+          <p>{{ texts.labels.email }}: {{ contact.email }}</p>
+          <p>{{ texts.labels.location }}: {{ contact.location }}</p>
         </div>
         <div class="footer-center">
-          <h3>Follow Me</h3>
+          <h3>{{ texts.footer.follow }}</h3>
           <div class="social-icons">
             <a
               v-for="item in socialLinks"
@@ -127,8 +133,8 @@
           </div>
         </div>
         <div class="footer-right">
-          <h3>Portfolio</h3>
-          <p>© {{ footer.year }} {{ footer.owner }}. All Rights Reserved.</p>
+          <h3>{{ texts.footer.portfolio }}</h3>
+          <p>© {{ footer.year }} {{ footer.owner }}. {{ texts.footer.rights }}</p>
         </div>
       </div>
     </footer>
@@ -136,43 +142,101 @@
 </template>
 
 <script setup>
+import { ref, onMounted, computed } from 'vue'
+
 const navLinks = [
-  { label: 'About', href: '#about' },
-  { label: 'Personal Info', href: '#info' },
-  { label: 'Likes', href: '#likes' },
-  { label: 'Role Models', href: '#models' },
-  { label: 'Skills', href: '#skills' },
-  { label: 'Languages', href: '#languages' },
-  { label: 'Contact', href: '#contact' },
-  { label: 'Services', href: '#services' },
-  { label: 'Projects', href: '#projects' }
-];
+  { key: 'about', href: '#about' },
+  { key: 'info', href: '#info' },
+  { key: 'likes', href: '#likes' },
+  { key: 'models', href: '#models' },
+  { key: 'skills', href: '#skills' },
+  { key: 'languages', href: '#languages' },
+  { key: 'contact', href: '#contact' },
+  { key: 'services', href: '#services' },
+  { key: 'projects', href: '#projects' }
+]
+
+// Theme state (light / dark)
+const theme = ref('dark')
+const themeLabel = ref('Umwijima')
+
+function applyTheme(t) {
+  const body = document.body
+  if (!body) return
+  if (t === 'light') {
+    body.classList.add('light')
+    themeLabel.value = 'Umucyo'
+  } else {
+    body.classList.remove('light')
+    themeLabel.value = 'Umwijima'
+  }
+}
+
+function toggleTheme() {
+  theme.value = theme.value === 'dark' ? 'light' : 'dark'
+  localStorage.setItem('site-theme', theme.value)
+  applyTheme(theme.value)
+}
+
+// Language state (en / rw)
+const lang = ref('rw')
+const langLabel = computed(() => (lang.value === 'en' ? 'EN' : 'RW'))
+
+function toggleLang() {
+  lang.value = lang.value === 'en' ? 'rw' : 'en'
+  localStorage.setItem('site-lang', lang.value)
+}
+
+onMounted(() => {
+  const savedTheme = localStorage.getItem('site-theme')
+  if (savedTheme === 'light' || savedTheme === 'dark') theme.value = savedTheme
+  applyTheme(theme.value)
+
+  const savedLang = localStorage.getItem('site-lang')
+  if (savedLang === 'en' || savedLang === 'rw') lang.value = savedLang
+})
+
+const translations = {
+  en: {
+    nav: { about: 'About', info: 'Personal Info', likes: 'Likes', models: 'Role Models', skills: 'Skills', languages: 'Programming Languages', contact: 'Contact', services: 'Services', projects: 'Projects' },
+    headings: { about: 'About Me', info: 'Personal Info', likes: 'Likes & Hobbies', models: 'Role Models', skills: 'Skills & Expertise', languages: 'Programming Languages', services: 'Services', contact: 'Contact', projects: 'Projects' },
+    about: 'Hello! My name is Shami Tonny. I am passionate about technology, programming, and creativity. I enjoy building websites and learning modern development tools.',
+    personalInfo: ['Name: Shami Tonny', 'Occupation: Student', 'Location: Rwanda', 'Goal: Becoming a professional software developer'],
+    likes: ['Programming', 'Gaming', 'Basketball', 'Learning new technologies', 'Designing websites', 'Music'],
+    roleModels: ['Tech Innovators', 'Successful Software Developers', 'Creative Designers'],
+    skills: ['HTML', 'CSS', 'JavaScript', 'Vue.js (Learning)', 'Problem Solving', 'Leadership'],
+    services: ['Web Development (HTML, CSS, JavaScript)', 'Creative Design', 'Problem Solving', 'Team Collaboration', 'Project Management', 'Technical Support', 'Helping companies go digital'],
+    labels: { email: 'Email', instagram: 'Instagram', location: 'Location' },
+    footer: { contact: 'Contact', follow: 'Follow Me', portfolio: 'Portfolio', rights: 'All Rights Reserved.' }
+  },
+  rw: {
+    nav: { about: 'Ibyerekeye', info: 'Amakuru', likes: 'Ibikundwa', models: 'Abagenderwaho', skills: 'Ubumenyi', languages: 'Indimi', contact: 'Twandikire', services: 'Serivisi', projects: 'Imishinga' },
+    headings: { about: 'Ibyerekeye', info: 'Amakuru Yanjye', likes: "Ibikundwa n'Imyidagaduro", models: 'Abagenderwaho', skills: "Ubumenyi n'Uburambe", languages: 'Indimi za Porogaramu', services: 'Serivisi', contact: 'Twandikire', projects: 'Imishinga' },
+    about: "Muraho! Nitwa Shami Tonny. Nkunda ikoranabuhanga, gahunda, n'ubuhanzi. Nkunda gukora imbuga no kwiga ibikoresho bishya by'iterambere.",
+    personalInfo: ['Izina: Shami Tonny', 'Umwuga: Umunyeshuri', 'Aho ndi: Rwanda', "Intego: Kuba umutekinisiye wa porogaramu w'inzozi"],
+    likes: ['Guprograma', 'Imikino', 'Basketball', 'Kwiga ikoranabuhanga rishya', 'Gushushanya imbuga', 'Umuziki'],
+    roleModels: ['Abahanga mu ikoranabuhanga', 'Abateza imbere porogaramu', "Abashushanya b'ubuhanga"],
+    skills: ['HTML', 'CSS', 'JavaScript', 'Vue.js (Ndiga)', 'Gukemura ibibazo', 'Ubuyobozi'],
+    services: ['Guteza imbere imbuga (HTML, CSS, JavaScript)', "Igishushanyo cy'udushya", 'Gukemura ibibazo', 'Gukorana mu itsinda', 'Gucunga imishinga', 'Ubufasha bwa tekiniki', 'Gufasha kompanyi kujya kuri digitale'],
+    labels: { email: 'Imeyili', instagram: 'Instagram', location: 'Aho ndi' },
+    footer: { contact: 'Twandikire', follow: 'Mukurikirane', portfolio: 'Poritofolio', rights: 'Uburenganzira bwose burabitswe.' }
+  }
+}
+
+const texts = computed(() => translations[lang.value])
 
 const hero = {
   name: 'Shami Tonny',
-  tagline: 'Student | Future Developer | Creative Thinker',
-  status: 'Available to work',
+  tagline: "Umunyeshuri | Umuvumbuzi w'ibitekerezo | Umuhanga mu ikoranabuhanga",
+  status: 'Nshobora Gukora',
   profileImage: '/sketch.png',
-  profileText: 'Creative web builder with a passion for polished UI, smooth animation, and real results.',
+  profileText: "Nukora imbuga za interineti n'umutima w'udushya, animation nziza, hamwe n'ibisubizo bifatika.",
   profilePoints: [
-    'Open to freelance and full-time work',
-    'Remote-ready and project-focused',
-    'Fast learner with strong design sense'
+    'Nyakira imishinga ya freelance na full-time',
+    'Nshobora gukora kure kandi nkibanda ku mishinga',
+    'Niga vuba kandi mfite icyerekezo cyiza mu design'
   ]
-};
-
-const about = 'Hello! My name is Shami Tonny. I am passionate about technology, programming, and creativity. I enjoy building websites and learning modern development tools.';
-
-const personalInfo = [
-  'Name: Shami Tonny',
-  'Occupation: Student',
-  'Location: Rwanda',
-  'Goal: Becoming a professional software developer'
-];
-
-const likes = ['Programming', 'Gaming', 'Basketball', 'Learning new technologies', 'Designing websites', 'Music'];
-const roleModels = ['Tech Innovators', 'Successful Software Developers', 'Creative Designers'];
-const skills = ['HTML', 'CSS', 'JavaScript', 'Vue.js (Learning)', 'Problem Solving', 'Leadership'];
+}
 
 const languages = [
   { name: 'HTML', icon: 'https://img.icons8.com/color/96/000000/html-5.png', years: '2 years', projects: '12+ projects' },
@@ -181,41 +245,25 @@ const languages = [
   { name: 'Vue.js', icon: 'https://img.icons8.com/color/96/000000/vue-js.png', years: '6 months', projects: '3+ projects' },
   { name: 'Python', icon: 'https://img.icons8.com/color/96/000000/python.png', years: '1 year', projects: '5+ projects' },
   { name: 'React', icon: 'https://img.icons8.com/color/96/000000/react-native.png', years: '6 months (Learning)', projects: '2+ projects' }
-];
-
-const services = [
-  'Web Development (HTML, CSS, JavaScript)',
-  'Creative Design',
-  'Problem Solving',
-  'Team Collaboration',
-  'Project Management',
-  'Technical Support',
-  'Helping companies go digital'
-];
-
-const contact = {
-  email: 'tonnyshami2k25@gmail.com',
-  instagram: '@shamy.tonn.25',
-  location: 'Rwanda'
-};
+]
 
 const projects = [
-  { title: 'Restaurant Website', description: 'A full restaurant website with menu, booking, and responsive design.' },
-  { title: 'TEMBERA URWANDA tourism app', description: 'A tourism app built with Vue.js home page, services page, about page, contact us page, gallery page and destinations page.' },
-  { title: 'AI Idea generator', description: 'An AI based Idea generator which turns ideas into projects.' },
-  { title: 'Portfolio Website', description: 'This personal portfolio showcasing my skills and projects.' }
-];
+  { title: "Urubuga rw'Hoteli", description: "Urubuga rwuzuye rw'restora hamwe na menu, booking, na responsive design." },
+  { title: 'TEMBERA URWANDA', description: "Porogaramu y'ubukerarugendo yubatswe na Vue.js: urupapuro rw'imbonerahamwe, serivisi, ibyerekeye, contact, gallery, n'ahantu." },
+  { title: 'AI Idea generator', description: 'Porogaramu ishingiye kuri AI izana ibitekerezo bikavamo imishinga.' },
+  { title: 'Poritofolio', description: "Iri ni poritofolio yanjye igaragaza ubumenyi n'imishinga." }
+]
 
 const socialLinks = [
   { name: 'Instagram', url: 'https://instagram.com/shamy.tonn.25', icon: 'https://img.icons8.com/ios-filled/24/ffffff/instagram-new.png' },
   { name: 'GitHub', url: 'https://github.com/123TRELLIS', icon: 'https://img.icons8.com/ios-filled/24/ffffff/github.png' },
   { name: 'Gmail', url: 'mailto:tonnyshami2k25@gmail.com', icon: 'https://img.icons8.com/ios-filled/24/ffffff/gmail.png' }
-];
+]
 
 const footer = {
   year: '2026',
   owner: 'Shami Tonny'
-};
+}
 </script>
 
 <style>
@@ -226,171 +274,70 @@ body {
   color: white;
 }
 
-#app {
-  min-height: 100vh;
+/* Light theme overrides (when <body class="light">) */
+body.light {
+  background: linear-gradient(135deg, #ffffff, #f3f6f9);
+  color: #111;
 }
 
-nav {
-  background: #000000;
-  padding: 15px;
-  text-align: center;
-  position: sticky;
-  top: 0;
-  z-index: 10;
+body.light nav {
+  background: #ffffff;
 }
 
-nav a {
-  color: white;
-  text-decoration: none;
-  margin: 15px;
-  font-weight: bold;
-  transition: 0.3s;
-}
+body.light nav a { color: #111; }
+body.light .status-badge { background: rgba(81,232,106,0.06); color: #1a7a2e; }
+body.light .profile-details { background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.05); }
+body.light section { background: #ffffff; border-color: rgba(0,0,0,0.06); color: #111; }
+body.light .project-card { background: #fafafa; }
+body.light footer { background: linear-gradient(135deg, #ffffff, #f6f6f6); color: #111; border-top-color: rgba(0,0,0,0.06); }
 
-nav a:hover {
-  color: #888;
-}
+#app { min-height: 100vh; }
 
-header {
-  padding: 60px 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
+nav { display:flex; align-items:center; justify-content:space-between; padding:12px 20px; position:sticky; top:0; z-index:10; background:#000; }
+.nav-left { text-align:left; }
+.nav-right { text-align:right; }
 
-.hero {
-  display: grid;
-  grid-template-columns: 1fr minmax(280px, 340px);
-  gap: 32px;
-  align-items: center;
-}
+nav a { color: white; text-decoration: none; margin: 0 12px; font-weight: bold; transition: 0.3s; }
+nav a:hover { color: #9efeac; }
 
-.hero-text {
-  animation: fadeInUp 0.9s ease forwards;
-}
+.theme-toggle { background:transparent; border:1px solid rgba(255,255,255,0.12); color:white; padding:8px 12px; border-radius:8px; cursor:pointer }
+.theme-toggle:hover { background: rgba(255,255,255,0.03); }
+.lang-toggle { background:transparent; border:1px solid rgba(255,255,255,0.12); color:white; padding:8px 12px; border-radius:8px; cursor:pointer; margin-left:8px }
+.lang-toggle:hover { background: rgba(255,255,255,0.03); }
 
-header h1 {
-  font-size: 44px;
-  margin: 0 0 16px;
-}
+header { padding: 60px 20px; max-width: 1200px; margin: 0 auto; }
 
-header p {
-  color: #ccc;
-  line-height: 1.7;
-  max-width: 600px;
-}
+.hero { display: grid; grid-template-columns: 1fr minmax(280px, 340px); gap: 32px; align-items: center; }
 
-.profile-card {
-  padding: 16px;
-  background: transparent;
-  animation: fadeInUp 0.9s ease forwards;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-}
+.hero-text { animation: fadeInUp 0.9s ease forwards; }
 
-.profile-photo {
-  position: relative;
-  width: 280px;
-  height: 280px;
-  border-radius: 50%;
-  overflow: visible;
-  animation: glowPulse 3s ease-in-out infinite;
-}
+header h1 { font-size: 44px; margin: 0 0 16px; }
 
-.profile-photo img {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
-  border-radius: 50%;
-  transition: transform 0.8s ease;
-  box-shadow: 0 0 20px rgba(81, 232, 106, 0.6), 0 0 40px rgba(81, 232, 106, 0.3), inset 0 0 20px rgba(81, 232, 106, 0.15);
-}
+header p { color: #ccc; line-height: 1.7; max-width: 600px; }
 
-.profile-card:hover .profile-photo img {
-  transform: scale(1.05);
-}
+.profile-card { padding: 16px; background: transparent; animation: fadeInUp 0.9s ease forwards; display: flex; flex-direction: column; align-items: center; gap: 20px; }
 
-.profile-details {
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(81, 232, 106, 0.25);
-  border-radius: 16px;
-  width: 100%;
-  box-shadow: 0 8px 32px rgba(81, 232, 106, 0.1);
-}
+.profile-photo { position: relative; width: 280px; height: 280px; border-radius: 50%; overflow: visible; animation: glowPulse 3s ease-in-out infinite; }
 
-.profile-details p,
-.profile-details li {
-  margin: 0 0 14px;
-  color: #ddd;
-  font-size: 14px;
-}
+.profile-photo img { width: 100%; height: 100%; display: block; object-fit: cover; border-radius: 50%; transition: transform 0.8s ease; box-shadow: 0 0 20px rgba(81, 232, 106, 0.6), 0 0 40px rgba(81, 232, 106, 0.3), inset 0 0 20px rgba(81, 232, 106, 0.15); }
 
-.profile-details ul {
-  list-style: disc inside;
-  margin: 0;
-  padding: 0;
-  color: #ccc;
-  font-size: 13px;
-}
+.profile-card:hover .profile-photo img { transform: scale(1.05); }
 
-.profile-details li {
-  margin-bottom: 8px;
-}
+.profile-details { padding: 20px; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(81, 232, 106, 0.25); border-radius: 16px; width: 100%; box-shadow: 0 8px 32px rgba(81, 232, 106, 0.1); }
 
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  background: rgba(81, 232, 106, 0.12);
-  color: #9efeac;
-  border: 1px solid rgba(81, 232, 106, 0.2);
-  border-radius: 999px;
-  padding: 10px 16px;
-  font-weight: 700;
-  box-shadow: 0 0 24px rgba(81, 232, 106, 0.15);
-  animation: pulse 2.5s ease-in-out infinite;
-}
+.profile-details p, .profile-details li { margin: 0 0 14px; color: #ddd; font-size: 14px; }
 
-.status-badge span {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #51e86a;
-  box-shadow: 0 0 12px rgba(81, 232, 106, 0.75);
-}
+.profile-details ul { list-style: disc inside; margin: 0; padding: 0; color: #ccc; font-size: 13px; }
+.profile-details li { margin-bottom: 8px; }
 
-section {
-  padding: 40px 20px;
-  margin: 20px auto;
-  max-width: calc(100% - 40px);
-  width: 1100px;
-  box-sizing: border-box;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(81, 232, 106, 0.03) 100%);
-  border: 1px solid rgba(81, 232, 106, 0.15);
-  border-left: 3px solid rgba(81, 232, 106, 0.4);
-  border-radius: 12px;
-  opacity: 0;
-  transform: translateY(24px);
-  animation: fadeInUp 0.9s ease forwards;
-  backdrop-filter: blur(10px);
-  transition: all 0.4s ease;
-}
+.status-badge { display: inline-flex; align-items: center; gap: 10px; background: rgba(81, 232, 106, 0.12); color: #9efeac; border: 1px solid rgba(81, 232, 106, 0.2); border-radius: 999px; padding: 10px 16px; font-weight: 700; box-shadow: 0 0 24px rgba(81, 232, 106, 0.15); animation: pulse 2.5s ease-in-out infinite; }
+.status-badge span { width: 10px; height: 10px; border-radius: 50%; background: #51e86a; box-shadow: 0 0 12px rgba(81, 232, 106, 0.75); }
 
-@media (max-width: 1200px) {
-  section {
-    width: 100%;
-    max-width: calc(100% - 40px);
-    padding: 40px 20px;
-  }
-}
+section { padding: 40px 20px; margin: 20px auto; max-width: calc(100% - 40px); width: 1100px; box-sizing: border-box; background: linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(81, 232, 106, 0.03) 100%); border: 1px solid rgba(81, 232, 106, 0.15); border-left: 3px solid rgba(81, 232, 106, 0.4); border-radius: 12px; opacity: 0; transform: translateY(24px); animation: fadeInUp 0.9s ease forwards; backdrop-filter: blur(10px); transition: all 0.4s ease; }
 
-section:hover {
-  border-left-color: rgba(81, 232, 106, 0.8);
-  box-shadow: 0 12px 48px rgba(81, 232, 106, 0.08);
-}
+@media (max-width: 1200px) { section { width: 100%; max-width: calc(100% - 40px); padding: 40px 20px; } }
+
+section:hover { border-left-color: rgba(81, 232, 106, 0.8); box-shadow: 0 12px 48px rgba(81, 232, 106, 0.08); }
 
 section:nth-of-type(1) { animation-delay: 0.1s; }
 section:nth-of-type(2) { animation-delay: 0.2s; }
@@ -398,6 +345,8 @@ section:nth-of-type(3) { animation-delay: 0.3s; }
 section:nth-of-type(4) { animation-delay: 0.35s; }
 section:nth-of-type(5) { animation-delay: 0.4s; }
 section:nth-of-type(6) { animation-delay: 0.45s; }
+section:nth-of-type(7) { animation-delay: 0.5s; }
+section:nth-of-type(8) { animation-delay: 0.55s; }
 section:nth-of-type(7) { animation-delay: 0.5s; }
 section:nth-of-type(8) { animation-delay: 0.55s; }
 
